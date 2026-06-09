@@ -109,6 +109,9 @@
   .fchip{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--line2);background:var(--panel);color:var(--muted);cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:6px;transition:.12s}
   .fchip i{width:9px;height:9px;border-radius:50%} .fchip.off{opacity:.4} .fchip:hover{border-color:var(--blue)}
   .search{background:#0f1830;border:1px solid var(--line2);color:var(--txt);border-radius:8px;padding:7px 11px;font-size:13px;width:190px}
+  .glossary{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 14px;margin:0 0 12px;font-size:12px;color:var(--muted)}
+  .glossary>b.gk{color:var(--txt);font-size:12.5px}
+  .glossary span{white-space:nowrap} .glossary span b{color:var(--gold);font-weight:700;margin-right:4px}
 
   .tablewrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:var(--panel)}
   .scroll{overflow-x:auto}
@@ -199,6 +202,15 @@
   <div class="filters" style="margin:-4px 0 12px">
     <input class="search" id="search" type="text" placeholder="Filter by name or ticker…" autocomplete="off">
     <span class="hint" id="count"></span>
+  </div>
+  <div class="glossary">
+    <b class="gk">Key terms:</b>
+    <span><b>EV</b> Enterprise Value = market cap + net debt (the cost to buy the whole business)</span>
+    <span><b>EBITDA</b> operating cash earnings</span>
+    <span><b>EV/EBITDA</b> what a buyer pays for the business vs. the cash it throws off</span>
+    <span><b>P/E</b> price &divide; earnings per share</span>
+    <span><b>P/S</b> price &divide; sales</span>
+    <span class="dim">tip: hover any column header for the full definition</span>
   </div>
   <div class="tablewrap"><div class="scroll"><table id="t"><thead><tr id="headRow"></tr></thead><tbody id="compBody"></tbody></table></div></div>
 
@@ -367,7 +379,7 @@ function renderHero(){
       <h3>Where MAIR trades vs. your peer set <span class="badge">Live math</span></h3>
       <p class="desc">Applying the <b>median multiple of the <span id="basisN">${m.n}</span>-company peer set you build below</b> to Madison Air's own fundamentals gives an implied price per lens. The gold line is MAIR's <b>actual ${fmtUSD(MAIR.price)}</b>. Read it as: the market pays a premium on trailing numbers, but on FY26 EBITDA guidance it sits in line with peers.</p>
       ${lensHTML}
-      <div class="lens-legend"><span><span class="k-bar"></span> Implied at peer median</span><span><span class="k-gold"></span> MAIR actual</span><span>Median: EV/EBITDA <b style="color:var(--txt)" data-tip="EV/EBITDA">${fmtX(m.evEbitda)}</b> · EV/Rev <b style="color:var(--txt)">${fmtX(m.evRev)}</b> · P/S <b style="color:var(--txt)">${fmtX(m.ps)}</b></span></div>
+      <div class="lens-legend"><span><span class="k-bar"></span> Implied at peer median</span><span><span class="k-gold"></span> MAIR actual</span><span>Median: EV/EBITDA <b style="color:var(--txt)" data-tip="EV/EBITDA">${fmtX(m.evEbitda)}</b> · EV/Rev <b style="color:var(--txt)">${fmtX(m.evRev)}</b> · P/S <b style="color:var(--txt)">${fmtX(m.ps)}</b></span><span style="width:100%;color:var(--muted2);margin-top:2px"><b style="color:var(--gold)">EV</b> = Enterprise Value (market cap + net debt) &nbsp;·&nbsp; <b style="color:var(--gold)">EBITDA</b> = operating cash earnings</span></div>
       <div class="peerbuild">
         <div class="pb-h">Build the peer set <span>click tickers in or out, bars and median update live</span><button id="pbReset" style="margin-left:auto;background:#0f1830;color:var(--muted);border:1px solid var(--line2);border-radius:7px;padding:3px 10px;font-size:11.5px;cursor:pointer;font-weight:600">↺ Reset</button></div>
         ${builder}
