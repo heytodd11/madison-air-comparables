@@ -70,6 +70,7 @@
   .val .desc{font-size:12.5px;color:var(--muted);margin:0 0 13px;max-width:64ch} .val .desc b{color:var(--txt)}
   .lens-row{display:grid;grid-template-columns:150px 1fr 116px;align-items:center;gap:12px;margin-bottom:10px}
   .lens-row .lbl{font-size:12px;color:var(--muted)} .lens-row .lbl b{display:block;color:var(--txt);font-size:12.5px;font-weight:650}
+  .term{cursor:help;border-bottom:1px dotted var(--muted2)} thead th[data-tip]{cursor:help}
   .bar{position:relative;height:26px;background:#0c1326;border:1px solid var(--line);border-radius:7px;overflow:hidden}
   .bar .fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px 0 0 6px;background:linear-gradient(90deg,#39487a,#54689f);transition:width .5s cubic-bezier(.2,.7,.3,1)}
   .bar .actual{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold);box-shadow:0 0 7px rgba(230,180,80,.8)}
@@ -340,14 +341,14 @@ function renderHero(){
   const cc=MAIR.changePct>=0?"up":"down",ct=(MAIR.changePct>=0?"+":"")+MAIR.changePct.toFixed(2)+"%";
   const fresh=MAIR.fresh==="live"?`Live · updated ${MAIR.fresh_t}`:`Market data as of ${SNAPSHOT_DATE} close`;
   const lenses=[
-    {lbl:"EV / EBITDA",sub:"on FY26E EBITDA",implied:impPriceEV(m.evEbitda,MAIR.ebitdaFwd),basis:`${fmtX(m.evEbitda)} × $${MAIR.ebitdaFwd.toFixed(2)}B`},
-    {lbl:"EV / EBITDA",sub:"on trailing EBITDA",implied:impPriceEV(m.evEbitda,MAIR.ebitdaTTM),basis:`${fmtX(m.evEbitda)} × $${MAIR.ebitdaTTM.toFixed(2)}B`},
-    {lbl:"EV / Revenue",sub:"on TTM revenue",implied:impPriceEV(m.evRev,MAIR.revTTM),basis:`${fmtX(m.evRev)} × $${MAIR.revTTM.toFixed(2)}B`},
-    {lbl:"Price / Sales",sub:"on TTM revenue",implied:impPricePS(m.ps),basis:`${fmtX(m.ps)} × $${MAIR.revTTM.toFixed(2)}B`}
+    {lbl:"EV / EBITDA",tip:"EV/EBITDA",sub:"on FY26E EBITDA",implied:impPriceEV(m.evEbitda,MAIR.ebitdaFwd),basis:`${fmtX(m.evEbitda)} × $${MAIR.ebitdaFwd.toFixed(2)}B`},
+    {lbl:"EV / EBITDA",tip:"EV/EBITDA",sub:"on trailing EBITDA",implied:impPriceEV(m.evEbitda,MAIR.ebitdaTTM),basis:`${fmtX(m.evEbitda)} × $${MAIR.ebitdaTTM.toFixed(2)}B`},
+    {lbl:"EV / Revenue",tip:"EV/Rev",sub:"on TTM revenue",implied:impPriceEV(m.evRev,MAIR.revTTM),basis:`${fmtX(m.evRev)} × $${MAIR.revTTM.toFixed(2)}B`},
+    {lbl:"Price / Sales",tip:"P/S",sub:"on TTM revenue",implied:impPricePS(m.ps),basis:`${fmtX(m.ps)} × $${MAIR.revTTM.toFixed(2)}B`}
   ];
   const maxV=Math.max(MAIR.price,...lenses.map(l=>l.implied)),scale=100/(maxV*1.06);
   const lensHTML=lenses.map(l=>{const fw=Math.max(2,l.implied*scale),al=Math.min(99,MAIR.price*scale);const diff=(MAIR.price-l.implied)/l.implied*100,dc=diff>=0?"prem":"disc",dt=(diff>=0?"+":"")+diff.toFixed(0)+"%";
-    return `<div class="lens-row"><div class="lbl"><b>${l.lbl}</b>${l.sub}<br><span class="dim" style="font-size:10.5px">${l.basis}</span></div><div class="bar"><div class="fill" style="width:${fw}%"></div><div class="actual" style="left:${al}%"></div><div class="barlab">implied ${fmtUSD(l.implied)}</div></div><div class="delta ${dc}">${dt}<small>vs implied</small></div></div>`;}).join("");
+    return `<div class="lens-row"><div class="lbl"><b><span class="term" data-tip="${l.tip}">${l.lbl}</span></b>${l.sub}<br><span class="dim" style="font-size:10.5px">${l.basis}</span></div><div class="bar"><div class="fill" style="width:${fw}%"></div><div class="actual" style="left:${al}%"></div><div class="barlab">implied ${fmtUSD(l.implied)}</div></div><div class="delta ${dc}">${dt}<small>vs implied</small></div></div>`;}).join("");
 
   // peer builder grouped chips
   const builder=Object.keys(GROUPS).map(g=>{
