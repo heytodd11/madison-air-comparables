@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Air &amp; Thermal Management: Public Comparables vs. Madison Air</title>
+<style>
+  :root{
+    --bg:#0a0f1c; --panel:#131b30; --panel2:#172037;
+    --line:#243150; --line2:#2e3c61; --txt:#e8edf7; --muted:#92a0bd; --muted2:#6c7a99;
+    --gold:#e6b450; --blue:#5b9bd5; --up:#37d399; --down:#ff6b73; --chip:#1d2740;
+    --shadow:0 10px 40px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{background:radial-gradient(1200px 600px at 80% -10%,rgba(91,155,213,.10),transparent 60%),radial-gradient(1000px 500px at 0% 0%,rgba(230,180,80,.07),transparent 55%),var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  .wrap{max-width:1340px;margin:0 auto;padding:22px 26px 80px}
+  a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+
+  header.top{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(10,15,28,.97),rgba(10,15,28,.85));backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:13px 26px}
+  .top-inner{max-width:1340px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;flex-direction:column;gap:2px;margin-right:auto}
+  .brand h1{font-size:17.5px;margin:0;letter-spacing:.2px;font-weight:650}
+  .brand .sub{font-size:12.5px;color:var(--muted)} .brand .sub b{color:var(--gold);font-weight:600}
+  .status{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--muted2)}
+  .dot.live{background:var(--up);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(55,211,153,.45)}70%{box-shadow:0 0 0 7px rgba(55,211,153,0)}100%{box-shadow:0 0 0 0 rgba(55,211,153,0)}}
+  .asof{font-size:12.5px;color:var(--muted)} .asof b{color:var(--txt);font-weight:600}
+  button.btn{background:var(--panel2);color:var(--txt);border:1px solid var(--line2);padding:8px 14px;border-radius:9px;font-size:13px;cursor:pointer;font-weight:600;transition:.15s;display:inline-flex;align-items:center;gap:7px}
+  button.btn:hover{border-color:var(--blue);background:#1b2742} button.btn:disabled{opacity:.55;cursor:default}
+  button.btn.primary{background:linear-gradient(180deg,#c9982f,#b07f1f);border-color:#7d5c14;color:#1a1405} button.btn.primary:hover{filter:brightness(1.07)}
+  button.btn.sm{padding:5px 10px;font-size:12px}
+  .toggle{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none} .toggle input{accent-color:var(--gold);width:15px;height:15px}
+
+  .sec-h{display:flex;align-items:center;justify-content:space-between;margin:34px 0 13px;gap:12px;flex-wrap:wrap}
+  .sec-h h3{margin:0;font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+  .sec-h .hint{font-size:12px;color:var(--muted2)}
+  .badge{font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);border:1px solid #2f4870;border-radius:6px;padding:2px 7px;font-weight:700}
+  .badge.g{color:var(--gold);border-color:#7d5c14}
+
+  /* hero */
+  .hero{margin-top:22px;background:linear-gradient(135deg,rgba(230,180,80,.10),rgba(230,180,80,0) 45%),linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #38406a;border-radius:18px;padding:22px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--gold),#9a7b2e)}
+  .hero-grid{display:grid;grid-template-columns:minmax(300px,1.02fr) 2fr;gap:26px}
+  @media(max-width:920px){.hero-grid{grid-template-columns:1fr}}
+  .anchor-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px}
+  .anchor-tag .pip{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  .hero h2{margin:0 0 2px;font-size:25px;font-weight:700}
+  .hero .ticker{color:var(--muted);font-size:13.5px;margin-bottom:13px} .hero .ticker b{color:var(--blue);font-weight:700}
+  .price-row{display:flex;align-items:baseline;gap:14px;margin-bottom:3px;flex-wrap:wrap}
+  .price{font-size:42px;font-weight:700;letter-spacing:-.5px}
+  .chg{font-size:16px;font-weight:650;padding:3px 10px;border-radius:8px}
+  .chg.up{color:var(--up);background:rgba(55,211,153,.12)} .chg.down{color:var(--down);background:rgba(255,107,115,.12)}
+  .freshness{font-size:11.5px;color:var(--muted2);margin-top:2px}
+  .dcc{margin-top:14px;border:1px solid #1f5a45;background:linear-gradient(90deg,rgba(55,211,153,.10),rgba(55,211,153,.02));border-radius:11px;padding:11px 13px}
+  .dcc .h{font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--up);font-weight:700;display:flex;align-items:center;gap:7px}
+  .dcc .b{font-size:12.5px;color:var(--txt);margin-top:4px} .dcc .b b{color:#9be9c9}
+  .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:14px}
+  .hstat{background:var(--panel);padding:10px 13px}
+  .hstat .l{font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted2)}
+  .hstat .v{font-size:16.5px;font-weight:680;margin-top:3px} .hstat .v small{font-size:11px;color:var(--muted);font-weight:500}
+  .brands{margin-top:14px;display:flex;flex-wrap:wrap;gap:7px}
+  .brands .blab{font-size:10px;color:var(--muted2);width:100%;letter-spacing:.6px;text-transform:uppercase;margin-bottom:1px}
+  .chip{background:var(--chip);border:1px solid var(--line2);border-radius:20px;padding:4px 11px;font-size:12px}
+  a.chip.brand{cursor:pointer;text-decoration:none;color:var(--txt);transition:.12s} a.chip.brand:hover{border-color:var(--blue);background:#1b2742}
+  .chip .ext{opacity:.45;font-size:10px}
+
+  .val h3{margin:0 0 3px;font-size:15px;font-weight:680;display:flex;align-items:center;gap:9px}
+  .val .desc{font-size:12.5px;color:var(--muted);margin:0 0 13px;max-width:64ch} .val .desc b{color:var(--txt)}
+  .lens-row{display:grid;grid-template-columns:150px 1fr 116px;align-items:center;gap:12px;margin-bottom:10px}
+  .lens-row .lbl{font-size:12px;color:var(--muted)} .lens-row .lbl b{display:block;color:var(--txt);font-size:12.5px;font-weight:650}
+  .bar{position:relative;height:26px;background:#0c1326;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .bar .fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px 0 0 6px;background:linear-gradient(90deg,#39487a,#54689f);transition:width .5s cubic-bezier(.2,.7,.3,1)}
+  .bar .actual{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold);box-shadow:0 0 7px rgba(230,180,80,.8)}
+  .bar .barlab{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11.5px;color:#cdd7ec;font-weight:600}
+  .lens-row .delta{text-align:right;font-size:13px;font-weight:680} .delta.disc{color:var(--down)} .delta.prem{color:var(--up)}
+  .delta small{display:block;font-size:10px;color:var(--muted2);font-weight:500}
+  .lens-legend{font-size:11.5px;color:var(--muted2);margin-top:11px;display:flex;gap:16px;flex-wrap:wrap}
+  .lens-legend span{display:inline-flex;align-items:center;gap:6px}
+  .k-gold{width:10px;height:3px;background:var(--gold);border-radius:2px} .k-bar{width:10px;height:9px;background:#54689f;border-radius:2px}
+
+  /* peer builder */
+  .peerbuild{margin-top:16px;border-top:1px solid var(--line);padding-top:13px}
+  .pb-h{font-size:12.5px;font-weight:650;color:var(--txt);margin-bottom:9px;display:flex;align-items:center;gap:8px} .pb-h span{font-weight:400;color:var(--muted2);font-size:11.5px}
+  .pb-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;flex-wrap:wrap}
+  .pb-g{flex:0 0 110px;font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted2);padding-top:5px}
+  .pb-chips{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+  .pchip{font-size:11.5px;padding:3px 9px;border-radius:7px;border:1px solid var(--line2);background:#0f1830;color:var(--muted2);cursor:pointer;user-select:none;transition:.1s}
+  .pchip.on{color:#0c1326;font-weight:680;border-color:transparent}
+  .pchip:hover{filter:brightness(1.12)}
+
+  /* chart */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+  .chart-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+  .chart-controls label{font-size:12.5px;color:var(--muted)}
+  select{background:#0f1830;color:var(--txt);border:1px solid var(--line2);border-radius:8px;padding:6px 9px;font-size:12.5px;cursor:pointer}
+  .chart-box{position:relative;width:100%}
+  svg.bubble{width:100%;height:520px;display:block}
+  svg .grid{stroke:#1b2440;stroke-width:1} svg .axis{stroke:#37456b;stroke-width:1}
+  svg .tick{fill:var(--muted2);font-size:11px} svg .axt{fill:var(--muted);font-size:12px;font-weight:600}
+  svg circle.bub{cursor:pointer;transition:opacity .15s,stroke .15s} svg circle.bub:hover{stroke:#fff;stroke-width:2}
+  svg text.blab{fill:#e8edf7;font-size:11px;font-weight:650;pointer-events:none}
+  svg text.mlab{fill:var(--gold);font-size:13px;font-weight:750;pointer-events:none}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px} .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .fchip{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--line2);background:var(--panel);color:var(--muted);cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:6px;transition:.12s}
+  .fchip i{width:9px;height:9px;border-radius:50%} .fchip.off{opacity:.4} .fchip:hover{border-color:var(--blue)}
+  .search{background:#0f1830;border:1px solid var(--line2);color:var(--txt);border-radius:8px;padding:7px 11px;font-size:13px;width:190px}
+
+  .tablewrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:var(--panel)}
+  .scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;min-width:1140px}
+  thead th{position:sticky;top:0;background:#0f1730;z-index:2;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);font-weight:650;text-align:right;padding:11px 12px;border-bottom:1px solid var(--line2);cursor:pointer;white-space:nowrap;user-select:none}
+  thead th.l{text-align:left} thead th.c{text-align:center} thead th:hover{color:var(--txt)}
+  thead th .car{opacity:.35;font-size:9px;margin-left:3px} thead th.sorted .car{opacity:1;color:var(--gold)}
+  tbody td{padding:10px 12px;text-align:right;border-bottom:1px solid #1b2440;white-space:nowrap;font-size:13.5px}
+  tbody tr{cursor:pointer} tbody tr:hover td{background:#161f38}
+  td.l{text-align:left} td.c{text-align:center}
+  .co{display:flex;align-items:center;gap:9px}
+  .co .gd{width:8px;height:8px;border-radius:50%;flex:0 0 auto;position:relative}
+  .co .gd.live::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px solid var(--up);opacity:.6}
+  .co .nm{font-weight:620;font-size:13.5px;display:block} .co .tk{font-size:11.5px;color:var(--muted2)} .co .tk b{color:var(--blue)}
+  .co .arrow{color:var(--muted2);font-size:12px;margin-left:2px;opacity:0;transition:.1s} tr:hover .co .arrow{opacity:1}
+  .up{color:var(--up)} .down{color:var(--down)} .dim{color:var(--muted2)}
+  .est{color:var(--gold);font-size:10px;vertical-align:super;margin-left:1px;cursor:help}
+  .spk{vertical-align:middle}
+  .row-median td{background:#0f1830;border-top:2px solid var(--line2);font-weight:650}
+  .row-median .lbl{font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+
+  /* drawer */
+  .scrim{position:fixed;inset:0;background:rgba(5,8,16,.55);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.2s;z-index:50} .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:460px;max-width:93vw;background:linear-gradient(180deg,var(--panel2),var(--panel));border-left:1px solid var(--line2);box-shadow:-20px 0 60px rgba(0,0,0,.5);transform:translateX(100%);transition:transform .28s cubic-bezier(.3,.7,.2,1);z-index:51;overflow-y:auto;padding:24px 26px}
+  .drawer.open{transform:translateX(0)}
+  .drawer .x{position:absolute;top:16px;right:18px;font-size:22px;color:var(--muted);cursor:pointer;line-height:1}
+  .drawer .gtag{font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;display:inline-flex;align-items:center;gap:7px}
+  .drawer h2{margin:7px 0 1px;font-size:23px}
+  .drawer .dtk{color:var(--muted);font-size:13px;margin-bottom:14px} .drawer .dtk b{color:var(--blue)}
+  .drawer .dprice{display:flex;align-items:baseline;gap:12px;margin-bottom:14px} .drawer .dprice .p{font-size:30px;font-weight:720}
+  .rng{margin:2px 0 16px} .rng-bar{position:relative;height:8px;background:#0c1326;border:1px solid var(--line);border-radius:6px}
+  .rng-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px 0 0 5px;background:linear-gradient(90deg,#39487a,#54689f)}
+  .rng-mark{position:absolute;top:-3px;width:3px;height:14px;background:var(--gold);border-radius:2px;transform:translateX(-1px)}
+  .rng-lab{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted2);margin-top:5px}
+  .dstory{font-size:13.5px;line-height:1.6;color:#d4ddf0;border-left:3px solid var(--line2);padding-left:13px;margin:4px 0 16px}
+  .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-bottom:18px}
+  .dgrid .c{background:var(--panel);padding:10px 12px} .dgrid .c .l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted2)} .dgrid .c .v{font-size:16px;font-weight:680;margin-top:2px}
+  .dn-h{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+  a.news{display:block;border:1px solid var(--line);background:#0f1830;border-radius:9px;padding:9px 11px;margin-bottom:8px;transition:.12s} a.news:hover{border-color:var(--blue);text-decoration:none;background:#13203a}
+  a.news .nsrc{display:block;font-size:10.5px;color:var(--muted2);margin-bottom:2px} a.news .nhead{display:block;font-size:12.5px;color:var(--txt);line-height:1.35}
+
+  #tip{position:fixed;z-index:80;max-width:280px;background:#0c1326;border:1px solid var(--line2);border-radius:9px;padding:9px 12px;font-size:12px;line-height:1.45;color:var(--txt);box-shadow:0 8px 30px rgba(0,0,0,.5);pointer-events:none;opacity:0;transition:opacity .12s}
+  #tip b{color:var(--gold)} #tip .tt{font-weight:700;margin-bottom:2px;display:block}
+  .keybox{margin-top:18px;background:var(--panel);border:1px dashed var(--line2);border-radius:11px;padding:13px 15px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .keybox label{font-size:12.5px;color:var(--muted)} .keybox input{background:#0c1326;border:1px solid var(--line2);color:var(--txt);border-radius:8px;padding:7px 11px;font-size:13px;width:300px;font-family:ui-monospace,Menlo,monospace}
+  .keybox .ok{font-size:12px;color:var(--up)} .keybox .note{font-size:11.5px;color:var(--muted2);width:100%}
+  .notes{margin-top:22px;font-size:11.5px;color:var(--muted2);line-height:1.7} .notes b{color:var(--muted)}
+  footer{margin-top:28px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px} footer b{color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <h1>Air &amp; Thermal Management: Public Comparables</h1>
+      <div class="sub">Live valuation board benchmarking 21 air, HVAC &amp; data-center cooling names against <b>Madison Air (NYSE: MAIR)</b></div>
+    </div>
+    <div class="status">
+      <span class="asof"><span id="statusDot" class="dot"></span> <span id="statusText">Loading…</span></span>
+      <span class="asof">As of <b id="asof">June 8, 2026</b></span>
+      <label class="toggle"><input type="checkbox" id="autoChk"> Auto (60s)</label>
+      <button class="btn primary" id="refreshBtn">↻ Refresh live</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero" id="hero"></section>
+
+  <div class="sec-h">
+    <h3>Positioning map <span class="badge">Interactive</span></h3>
+    <span class="hint">Each bubble is a company · size = market cap · gold = Madison Air · hover for detail, click for the story</span>
+  </div>
+  <div class="card">
+    <div class="chart-controls">
+      <label>X axis: <select id="xSel"></select></label>
+      <label>Y axis: <select id="ySel"></select></label>
+      <span class="hint" id="chartHint"></span>
+    </div>
+    <div class="chart-box"><svg class="bubble" id="bubble" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="sec-h">
+    <h3>Public Comparables</h3>
+    <div class="filters" id="filters"></div>
+  </div>
+  <div class="filters" style="margin:-4px 0 12px">
+    <input class="search" id="search" type="text" placeholder="Filter by name or ticker…" autocomplete="off">
+    <span class="hint" id="count"></span>
+  </div>
+  <div class="tablewrap"><div class="scroll"><table id="t"><thead><tr id="headRow"></tr></thead><tbody id="compBody"></tbody></table></div></div>
+
+  <div class="keybox">
+    <label><b>Live data:</b> streaming from Finnhub (key built in).</label>
+    <input id="finnhubKey" type="text" placeholder="override Finnhub key (optional)" autocomplete="off" spellcheck="false">
+    <button class="btn sm" id="saveKey">Save</button>
+    <span id="keyState" class="ok"></span>
+    <span class="note">A free key is baked in so the whole board streams live on open. Munters (Stockholm) and LG (Korea) aren't on the free tier, so they hold at the June 8 snapshot.</span>
+  </div>
+
+  <div class="notes" id="notes"></div>
+  <footer><span>Prepared by <b>Overture Air Quality</b> · For discussion only, not investment advice.</span><span>Built with <b>Claude Code</b></span></footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer"></aside>
+<div id="tip"></div>
+
+<script>
+/* ===== CONFIG ===== */
+const FINNHUB_KEY="d8jmlc9r01qh6g3ra7hgd8jmlc9r01qh6g3ra7i0";
+const FMP_KEY="DclzPGCaTPrJWnzVFVjJXb3fBkC15jIx";
+const SNAPSHOT_DATE="June 8, 2026";
+
+/* ===== ANCHOR: MADISON AIR ===== */
+const MAIR={ name:"Madison Air", ticker:"MAIR", exchange:"NYSE", live:"MAIR",
+  price:39.59, changePct:-1.37, mcap:19.85, ev:25.41, pe:213.62, fwdPe:35.85, ps:5.55, evEbitda:31.75, evRev:7.11, divYield:0,
+  revTTM:3.57, grossM:39.15, opM:16.56, netM:2.60, ebitdaTTM:0.80, ebitdaFwd:1.0425, netDebt:5.56, shares:0.5014,
+  fy25Sales:3.30, fy25SalesPF:3.50, fy24Sales:2.62, employees:"~8,800", ipo:"Apr 2026 · ~$13.2B",
+  brands:[
+    {name:"Big Ass Fans",url:"https://bigassfans.com",blurb:"The iconic maker of oversized industrial and commercial fans (and the Haiku residential line), built to move huge volumes of air efficiently."},
+    {name:"Broan-NuTone",url:"https://broan-nutone.com",blurb:"America's leading residential ventilation brand: range hoods, bath fans and fresh-air systems."},
+    {name:"AprilAire",url:"https://www.aprilaire.com",blurb:"Indoor-air-quality pioneer: whole-home humidifiers, dehumidifiers, air purifiers and high-efficiency filters."},
+    {name:"Addison",url:"https://www.addison-hvac.com",blurb:"Commercial and industrial HVAC: dedicated outdoor-air systems (DOAS), heat pumps and custom units."},
+    {name:"Reznor",url:"https://www.reznorhvac.com",blurb:"Workhorse commercial and industrial heating: unit heaters, duct furnaces and ventilation."},
+    {name:"Nortek Air Solutions",url:"https://www.nortekair.com",blurb:"Custom commercial air-handling and HVAC systems for demanding, large-scale applications."},
+    {name:"Nortek Data Center Cooling",url:"https://www.nortekdatacenter.com",blurb:"Liquid cooling, coolant distribution units and custom air systems for AI and hyperscale data centers."},
+    {name:"Therma-Stor",url:"https://thermastor.com",blurb:"Madison, Wisconsin dehumidification specialist behind Santa Fe, Ultra-Aire, Phoenix and Quest."}
+  ],
+  story:"Larry Gies built Madison Industries into a roughly $5B private conglomerate, then carved out its air platform and took it public in April 2026 at about a $13.2B valuation. Madison Air spans residential indoor-air-quality (AprilAire, Broan-NuTone, Therma-Stor), air movement (Big Ass Fans), heating (Reznor, Addison) and a fast-growing data-center cooling arm (Nortek Data Center Cooling). The market is paying a clear growth premium; on this year's EBITDA guidance it already sits in line with peers, so the re-rating case rests on delivering margin expansion and the AI-cooling ramp." };
+
+/* ===== COMPARABLES (snapshot June 8, 2026 close) ===== */
+const COMPS=[
+  {name:"Carrier Global",ticker:"CARR",ex:"NYSE",group:"oem",live:"CARR",inMedian:true,price:67.35,changePct:0.28,mcap:55.94,ev:67.14,pe:44.89,fwdPe:24.08,ps:2.56,evEbitda:21.38,evRev:3.07,divYield:1.43,revTTM:21.87,opM:8.48,
+   story:"The 100-year-old inventor of modern air conditioning, spun out of United Technologies in 2020. It has reshaped itself into a pure-play climate company (buying Viessmann, selling Fire & Security), betting on heat pumps and energy efficiency."},
+  {name:"Trane Technologies",ticker:"TT",ex:"NYSE",group:"oem",live:"TT",inMedian:true,price:458.92,changePct:0.46,mcap:101.45,ev:104.99,pe:35.04,fwdPe:29.92,ps:4.70,evEbitda:24.80,evRev:4.86,divYield:0.92,revTTM:21.60,opM:18.01,
+   story:"The premium name in commercial HVAC, spun from Ingersoll Rand in 2020. Best-in-class margins and a powerful applied-systems franchise make it the Street's favorite way to play decarbonization of buildings."},
+  {name:"Johnson Controls",ticker:"JCI",ex:"NYSE",group:"oem",live:"JCI",inMedian:true,price:144.05,changePct:0.28,mcap:87.89,ev:96.71,pe:44.21,fwdPe:27.23,ps:3.60,evEbitda:22.39,evRev:3.96,divYield:1.11,revTTM:24.43,opM:14.39,
+   story:"The building-controls and HVAC giant, now a focused buildings company after shedding its auto and battery legacy. A huge installed base plus a data-center cooling pivot have driven a sharp re-rating."},
+  {name:"Lennox International",ticker:"LII",ex:"NYSE",group:"oem",live:"LII",inMedian:true,price:513.45,changePct:0.99,mcap:17.87,ev:19.77,pe:22.77,fwdPe:20.60,ps:3.40,evEbitda:17.14,evRev:3.76,divYield:1.01,revTTM:5.26,opM:19.74,
+   story:"A focused, high-return North American residential and light-commercial HVAC maker. Smaller and more disciplined than its peers, with sector-leading margins and a tight direct-to-contractor model."},
+  {name:"SPX Technologies",ticker:"SPXC",ex:"NYSE",group:"oem",live:"SPXC",inMedian:true,price:229.95,changePct:0.94,mcap:11.51,ev:12.03,pe:44.99,fwdPe:27.97,ps:4.90,evEbitda:24.39,evRev:5.12,divYield:0,revTTM:2.35,opM:15.59,
+   story:"A nimble mid-cap rolling up HVAC niches (cooling towers, heating) and detection/measurement. Its cooling-tower franchise gives it a direct data-center tailwind."},
+
+  {name:"Vertiv Holdings",ticker:"VRT",ex:"NYSE",group:"dc",live:"VRT",inMedian:true,price:300.57,changePct:0.02,mcap:115.45,ev:116.22,pe:75.54,fwdPe:44.04,ps:10.65,evEbitda:48.77,evRev:10.72,divYield:0.08,revTTM:10.84,opM:18.80,
+   story:"The breakout AI-infrastructure winner: power and thermal management for data centers, including liquid cooling. The market treats it as the purest data-center-cooling bet, which is why it carries a ~49x EV/EBITDA. This is the lane Madison Air's Nortek DCC is driving into."},
+  {name:"Modine Manufacturing",ticker:"MOD",ex:"NYSE",group:"dc",live:"MOD",inMedian:true,price:275.23,changePct:-0.46,mcap:14.54,ev:15.04,pe:121.78,fwdPe:35.28,ps:4.57,evEbitda:33.54,evRev:4.73,divYield:0,revTTM:3.18,opM:11.59,
+   story:"An old radiator maker reborn as a data-center thermal powerhouse. Its Airedale cooling line and broader climate segment have re-rated the stock dramatically on AI demand."},
+  {name:"AAON",ticker:"AAON",ex:"NASDAQ",group:"dc",live:"AAON",inMedian:true,price:132.05,changePct:-0.43,mcap:10.82,ev:11.26,pe:92.98,fwdPe:54.68,ps:6.69,evEbitda:44.85,evRev:6.96,divYield:0.30,revTTM:1.62,opM:10.51,
+   story:"A premium semi-custom rooftop and data-center cooling maker with a cult following for build quality. It trades richly on earnings because investors pay up for its data-center order book."},
+  {name:"nVent Electric",ticker:"NVT",ex:"NYSE",group:"dc",live:"NVT",inMedian:true,price:163.81,changePct:0.58,mcap:26.49,ev:28.00,pe:54.53,fwdPe:33.93,ps:6.12,evEbitda:30.30,evRev:6.47,divYield:0.51,revTTM:4.33,opM:16.19,
+   story:"Electrical connection and protection, increasingly a liquid-cooling and data-center thermal-management play after recent acquisitions. A quieter way to own the AI-cooling theme."},
+  {name:"Munters Group",ticker:"MTRS",ex:"STO",group:"dc",live:null,inMedian:true,est:"Listed in SEK; USD converted at ~0.105. Not on the free live tier, holds at snapshot.",price:22.10,changePct:1.84,mcap:4.03,ev:4.72,pe:79.89,fwdPe:25.10,ps:2.64,evEbitda:24.63,evRev:3.08,divYield:0.77,revTTM:1.53,opM:8.28,
+   story:"A Swedish specialist in air treatment and, increasingly, data-center cooling (its AirTech and Data Center segments). A direct European competitor to Madison Air's data-center cooling ambitions."},
+  {name:"Super Micro Computer",ticker:"SMCI",ex:"NASDAQ",group:"dc",live:"SMCI",inMedian:false,est:"Server/IT systems (liquid-cooled), context only.",price:43.99,changePct:5.64,mcap:26.46,ev:34.30,pe:23.06,fwdPe:14.58,ps:0.79,evEbitda:21.73,evRev:1.02,divYield:0,revTTM:33.70,opM:4.48,
+   story:"Not a cooling company per se, but the server maker whose liquid-cooled AI racks define the demand curve everyone else is chasing. Default-excluded from the HVAC valuation median."},
+
+  {name:"Comfort Systems USA",ticker:"FIX",ex:"NYSE",group:"dist",live:"FIX",inMedian:false,price:1852.03,changePct:0.44,mcap:65.09,ev:67.0,pe:53.45,fwdPe:41.93,ps:6.42,evEbitda:37.06,evRev:6.35,divYield:0.17,revTTM:10.14,opM:15.68,
+   story:"A mechanical-contractor roll-up that became one of the biggest winners of the data-center boom: it installs the HVAC, piping and controls inside the buildings. A monster stock riding a multi-year backlog."},
+  {name:"EMCOR Group",ticker:"EME",ex:"NYSE",group:"dist",live:"EME",inMedian:false,price:823.79,changePct:0.78,mcap:36.61,ev:35.0,pe:27.64,fwdPe:27.78,ps:2.06,evEbitda:19.56,evRev:2.04,divYield:0.20,revTTM:17.75,opM:9.32,
+   story:"The largest US mechanical and electrical construction firm, the hands that build and service data centers, hospitals and plants. A lower-multiple, high-cash-flow compounder."},
+  {name:"Watsco",ticker:"WSO",ex:"NYSE",group:"dist",live:"WSO",inMedian:false,price:371.84,changePct:0.12,mcap:15.12,ev:15.4,pe:30.52,fwdPe:29.25,ps:2.09,evEbitda:20.42,evRev:2.08,divYield:3.55,revTTM:7.24,opM:9.56,
+   story:"The largest HVAC distributor in North America, the pipes-and-boxes middleman between OEMs like Carrier and the contractor. A dividend-paying compounder geared to replacement demand."},
+
+  {name:"Eaton",ticker:"ETN",ex:"NYSE",group:"adj",live:"ETN",inMedian:false,price:403.14,changePct:1.82,mcap:156.54,ev:163.0,pe:39.44,fwdPe:28.64,ps:5.49,evEbitda:28.00,evRev:6.23,divYield:1.09,revTTM:28.52,opM:18.57,
+   story:"An electrical and power-management titan riding the same AI-data-center and electrification waves; it supplies the power backbone that cooling systems sit alongside. Adjacent to HVAC, not a pure comp."},
+  {name:"Donaldson",ticker:"DCI",ex:"NYSE",group:"adj",live:"DCI",inMedian:false,price:83.98,changePct:0.39,mcap:9.73,ev:10.4,pe:22.60,fwdPe:19.91,ps:2.56,evEbitda:14.85,evRev:2.66,divYield:1.52,revTTM:3.81,opM:15.38,
+   story:"A filtration specialist (engine, industrial, life-sciences). The closest public proxy to Madison Air's filtration heritage, included to frame the indoor-air-quality angle."},
+  {name:"Ingersoll Rand",ticker:"IR",ex:"NYSE",group:"adj",live:"IR",inMedian:false,price:72.46,changePct:0.29,mcap:28.36,ev:31.0,pe:49.07,fwdPe:20.45,ps:3.64,evEbitda:15.84,evRev:4.11,divYield:0.11,revTTM:7.78,opM:19.27,
+   story:"The former parent of Trane, now focused on air compression and industrial flow control. Useful as an industrial multiple benchmark on the edge of the air world."},
+
+  {name:"Daikin Industries",ticker:"DKILY",ex:"OTC ADR",group:"intl",live:"DKILY",inMedian:true,est:"ADR (USD). Secondary metrics from latest filings, approximate.",price:14.43,changePct:-3.35,mcap:43.16,ev:45.75,pe:24.19,fwdPe:22.0,ps:1.43,evEbitda:9.58,evRev:1.51,divYield:1.1,revTTM:30.40,opM:8.5,
+   story:"The world's largest HVAC company, Japan's heat-pump and VRF champion and owner of Goodman in the US. The natural global benchmark for Madison Air, and notably the cheapest large-cap in the group on EV/EBITDA."},
+  {name:"Mitsubishi Electric",ticker:"MIELY",ex:"OTC ADR",group:"intl",live:"MIELY",inMedian:false,est:"Diversified conglomerate (ADR, USD); air/HVAC is one of several segments, context only.",price:72.65,changePct:-3.21,mcap:75.07,ev:72.75,pe:27.93,fwdPe:18.0,ps:2.08,evEbitda:18.26,evRev:2.14,divYield:2.0,revTTM:36.00,opM:7.0,
+   story:"A diversified Japanese conglomerate whose air-conditioning unit (Mr. Slim, City Multi VRF) is a global force but is buried inside factory automation and other segments."},
+  {name:"Schneider Electric",ticker:"SBGSY",ex:"OTC ADR",group:"intl",live:"SBGSY",inMedian:false,est:"Energy-management / electrical giant (ADR, USD); data-center exposure via power, context only.",price:60.62,changePct:-7.87,mcap:159.9,ev:174.8,pe:32.13,fwdPe:22.82,ps:3.90,evEbitda:18.09,evRev:4.26,divYield:1.65,revTTM:41.00,opM:17.0,
+   story:"The French electrical and energy-management giant and a dominant data-center infrastructure player (APC, EcoStruxure). More power than cooling, but a key partner and competitor in the data-center build-out."},
+  {name:"LG Electronics",ticker:"066570.KS",ex:"KRX",group:"intl",live:null,inMedian:false,est:"Diversified electronics (KRW; USD converted at ~0.00073). Not on the free live tier, holds at snapshot.",price:176.30,changePct:-9.89,mcap:32.94,ev:40.48,pe:54.15,fwdPe:19.66,ps:0.50,evEbitda:8.47,evRev:0.61,divYield:0.56,revTTM:65.84,opM:3.21,
+   story:"Korea's electronics major with a large and growing HVAC business (residential AC, chillers, heat pumps) aimed increasingly at data centers, but buried inside a diversified electronics story."}
+];
+
+const GROUPS={oem:{label:"U.S. HVAC OEMs",short:"HVAC OEM"},dc:{label:"Data-center cooling",short:"DC cooling"},dist:{label:"Distribution & contractors",short:"Distribution"},adj:{label:"Air-adjacent & infra",short:"Adjacent"},intl:{label:"International majors",short:"International"}};
+const GCOL={oem:"#5b9bd5",dc:"#37d399",dist:"#e6b450",adj:"#c08bd6",intl:"#e08a6a"};
+
+[...COMPS,MAIR].forEach(c=>{c.basePrice=c.price;c.baseMcap=c.mcap;c.baseEv=c.ev;c.basePe=c.pe;c.basePs=c.ps;c.baseEvEbitda=c.evEbitda;c.baseEvRev=c.evRev;c.fresh="snap";});
+
+/* peer set drives the median; default = the inMedian names */
+let peerSet=new Set(COMPS.filter(c=>c.inMedian).map(c=>c.ticker));
+
+/* ===== FORMATTERS ===== */
+const fmtUSD=v=>v==null?"n/a":"$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtCap=v=>v==null?"n/a":(v>=1000?"$"+(v/1000).toFixed(2)+"T":"$"+v.toFixed(2)+"B");
+const fmtX=v=>v==null?"n/a":v.toFixed(1)+"x";
+const fmtPct=(v,d=2)=>v==null?"n/a":v.toFixed(d)+"%";
+const fmtChg=v=>v==null?'<span class="dim">n/a</span>':`<span class="${v>=0?'up':'down'}">${(v>=0?'+':'')+v.toFixed(2)}%</span>`;
+
+/* ===== TOOLTIP ===== */
+const tip=document.getElementById("tip");
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity="1";const w=tip.offsetWidth,h=tip.offsetHeight;let nx=x+14,ny=y+14;if(nx+w>innerWidth-10)nx=x-w-14;if(ny+h>innerHeight-10)ny=y-h-14;tip.style.left=nx+"px";tip.style.top=ny+"px";}
+function hideTip(){tip.style.opacity="0";}
+const DEFS={Price:"Last traded share price.",Day:"Change in the share price so far today.","Mkt Cap":"Market capitalization = share price × shares outstanding. The equity value of the company.","P/E":"Price ÷ earnings per share. What you pay for $1 of annual profit.","Fwd P/E":"P/E using next year's expected earnings.","EV/EBITDA":"Enterprise Value ÷ EBITDA. <b>EV = market cap + net debt</b> (cost to buy the whole business); <b>EBITDA</b> = operating cash earnings. The multiple acquirers and PE use, because it's neutral to financing.","EV/Rev":"Enterprise Value ÷ revenue.","P/S":"Market cap ÷ revenue.","Div %":"Annual dividend ÷ share price.","Rev TTM":"Revenue over the trailing twelve months.","Op margin":"Operating profit ÷ revenue.","1Y trend":"Share-price trajectory over the past year, built from live 5-day / 13-week / 26-week / 52-week returns."};
+document.addEventListener("mouseover",e=>{const el=e.target.closest("[data-tip]");if(!el)return;const k=el.getAttribute("data-tip");showTip(DEFS[k]?`<span class="tt">${k}</span>${DEFS[k]}`:k,e.clientX,e.clientY);});
+document.addEventListener("mousemove",e=>{if(tip.style.opacity==="1"){const el=e.target.closest("[data-tip]");if(el)showTip(tip.innerHTML,e.clientX,e.clientY);else hideTip();}});
+
+/* ===== VALUATION MATH ===== */
+function median(a){a=a.filter(x=>x!=null&&!isNaN(x)).sort((x,y)=>x-y);if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2;}
+function peerComps(){return COMPS.filter(c=>peerSet.has(c.ticker));}
+function peerMedians(){const b=peerComps();return{evEbitda:median(b.map(c=>c.evEbitda)),evRev:median(b.map(c=>c.evRev)),ps:median(b.map(c=>c.ps)),pe:median(b.map(c=>c.pe)),fwdPe:median(b.map(c=>c.fwdPe)),opM:median(b.map(c=>c.opM)),divY:median(b.map(c=>c.divYield)),n:b.length};}
+const impPriceEV=(mult,metric)=>(mult*metric-MAIR.netDebt)/MAIR.shares;
+const impPricePS=mult=>(mult*MAIR.revTTM)/MAIR.shares;
+function byTicker(tk){return tk==="MAIR"?MAIR:COMPS.find(c=>c.ticker===tk);}
+
+/* ===== HERO ===== */
+function renderHero(){
+  const m=peerMedians();
+  const cc=MAIR.changePct>=0?"up":"down",ct=(MAIR.changePct>=0?"+":"")+MAIR.changePct.toFixed(2)+"%";
+  const fresh=MAIR.fresh==="live"?`Live · updated ${MAIR.fresh_t}`:`Market data as of ${SNAPSHOT_DATE} close`;
+  const lenses=[
+    {lbl:"EV / EBITDA",sub:"on FY26E EBITDA",implied:impPriceEV(m.evEbitda,MAIR.ebitdaFwd),basis:`${fmtX(m.evEbitda)} × $${MAIR.ebitdaFwd.toFixed(2)}B`},
+    {lbl:"EV / EBITDA",sub:"on trailing EBITDA",implied:impPriceEV(m.evEbitda,MAIR.ebitdaTTM),basis:`${fmtX(m.evEbitda)} × $${MAIR.ebitdaTTM.toFixed(2)}B`},
+    {lbl:"EV / Revenue",sub:"on TTM revenue",implied:impPriceEV(m.evRev,MAIR.revTTM),basis:`${fmtX(m.evRev)} × $${MAIR.revTTM.toFixed(2)}B`},
+    {lbl:"Price / Sales",sub:"on TTM revenue",implied:impPricePS(m.ps),basis:`${fmtX(m.ps)} × $${MAIR.revTTM.toFixed(2)}B`}
+  ];
+  const maxV=Math.max(MAIR.price,...lenses.map(l=>l.implied)),scale=100/(maxV*1.06);
+  const lensHTML=lenses.map(l=>{const fw=Math.max(2,l.implied*scale),al=Math.min(99,MAIR.price*scale);const diff=(MAIR.price-l.implied)/l.implied*100,dc=diff>=0?"prem":"disc",dt=(diff>=0?"+":"")+diff.toFixed(0)+"%";
+    return `<div class="lens-row"><div class="lbl"><b>${l.lbl}</b>${l.sub}<br><span class="dim" style="font-size:10.5px">${l.basis}</span></div><div class="bar"><div class="fill" style="width:${fw}%"></div><div class="actual" style="left:${al}%"></div><div class="barlab">implied ${fmtUSD(l.implied)}</div></div><div class="delta ${dc}">${dt}<small>vs implied</small></div></div>`;}).join("");
+
+  // peer builder grouped chips
+  const builder=Object.keys(GROUPS).map(g=>{
+    const chips=COMPS.filter(c=>c.group===g).map(c=>{const on=peerSet.has(c.ticker);
+      return `<span class="pchip${on?' on':''}" data-tk="${c.ticker}" data-tip="${c.name.replace(/"/g,'&quot;')}" style="${on?`background:${GCOL[g]}`:''}">${c.ticker}</span>`;}).join("");
+    return `<div class="pb-row"><span class="pb-g">${GROUPS[g].label}</span><span class="pb-chips">${chips}</span></div>`;
+  }).join("");
+
+  document.getElementById("hero").innerHTML=`
+  <div class="hero-grid">
+    <div>
+      <div class="anchor-tag"><span class="pip"></span> The Anchor</div>
+      <h2>${MAIR.name}</h2>
+      <div class="ticker"><b>${MAIR.exchange}: ${MAIR.ticker}</b> · IPO ${MAIR.ipo} · Larry Gies, CEO</div>
+      <div class="price-row"><span class="price num">${fmtUSD(MAIR.price)}</span><span class="chg ${cc}">${ct}</span></div>
+      <div class="freshness">${fresh}</div>
+      <div class="dcc"><div class="h">◆ Data-center cooling, in Madison Air's words</div><div class="b">"Addressing surging data center cooling needs. Our portfolio is engineered for peak performance across every data center. Partners trust Madison Air's AI-ready, custom and configurable air, liquid and hybrid solutions." <a href="https://www.madisonair.com/industry/data-centers/" target="_blank" rel="noopener" style="color:#9be9c9;font-weight:600">madisonair.com ↗</a></div></div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="l">Market cap</div><div class="v num">${fmtCap(MAIR.mcap)}</div></div>
+        <div class="hstat"><div class="l">Enterprise value</div><div class="v num">${fmtCap(MAIR.ev)}</div></div>
+        <div class="hstat"><div class="l">Revenue (TTM)</div><div class="v num">${fmtCap(MAIR.revTTM)}</div></div>
+        <div class="hstat"><div class="l">FY25 net sales</div><div class="v num">${fmtCap(MAIR.fy25Sales)} <small>($${MAIR.fy25SalesPF}B PF)</small></div></div>
+        <div class="hstat"><div class="l">Sales growth FY24→25</div><div class="v num up">+${(((MAIR.fy25Sales/MAIR.fy24Sales)-1)*100).toFixed(0)}%</div></div>
+        <div class="hstat"><div class="l">FY26E adj. EBITDA</div><div class="v num">$1.02–1.07B</div></div>
+      </div>
+      <div class="brands"><span class="blab">Brand portfolio (per April 2026 prospectus): hover for detail, click to open the site</span>${MAIR.brands.map(b=>`<a class="chip brand" href="${b.url}" target="_blank" rel="noopener" data-tip="${(b.blurb+' · Click to open the brand site.').replace(/"/g,'&quot;')}">${b.name}<span class="ext"> ↗</span></a>`).join("")}</div>
+    </div>
+    <div class="val">
+      <h3>Where MAIR trades vs. your peer set <span class="badge">Live math</span></h3>
+      <p class="desc">Applying the <b>median multiple of the <span id="basisN">${m.n}</span>-company peer set you build below</b> to Madison Air's own fundamentals gives an implied price per lens. The gold line is MAIR's <b>actual ${fmtUSD(MAIR.price)}</b>. Read it as: the market pays a premium on trailing numbers, but on FY26 EBITDA guidance it sits in line with peers.</p>
+      ${lensHTML}
+      <div class="lens-legend"><span><span class="k-bar"></span> Implied at peer median</span><span><span class="k-gold"></span> MAIR actual</span><span>Median: EV/EBITDA <b style="color:var(--txt)" data-tip="EV/EBITDA">${fmtX(m.evEbitda)}</b> · EV/Rev <b style="color:var(--txt)">${fmtX(m.evRev)}</b> · P/S <b style="color:var(--txt)">${fmtX(m.ps)}</b></span></div>
+      <div class="peerbuild">
+        <div class="pb-h">Build the peer set <span>click tickers in or out, bars and median update live</span><button id="pbReset" style="margin-left:auto;background:#0f1830;color:var(--muted);border:1px solid var(--line2);border-radius:7px;padding:3px 10px;font-size:11.5px;cursor:pointer;font-weight:600">↺ Reset</button></div>
+        ${builder}
+      </div>
+    </div>
+  </div>`;
+  document.querySelectorAll(".pchip").forEach(ch=>ch.onclick=()=>{const tk=ch.dataset.tk;
+    peerSet.has(tk)?peerSet.delete(tk):peerSet.add(tk); if(peerSet.size===0)peerSet.add(tk);
+    renderHero(); renderTable();});
+  const rb=document.getElementById("pbReset"); if(rb)rb.onclick=()=>{peerSet=new Set(COMPS.filter(c=>c.inMedian).map(c=>c.ticker));renderHero();renderTable();};
+}
+
+/* ===== CHART ===== */
+const METRICS=[{k:"evEbitda",label:"EV / EBITDA",fmt:fmtX},{k:"evRev",label:"EV / Revenue",fmt:fmtX},{k:"pe",label:"P/E",fmt:fmtX},{k:"fwdPe",label:"Forward P/E",fmt:fmtX},{k:"ps",label:"P/S",fmt:fmtX},{k:"opM",label:"Operating margin %",fmt:v=>fmtPct(v,1)},{k:"divYield",label:"Dividend yield %",fmt:v=>fmtPct(v,2)},{k:"revTTM",label:"Revenue (TTM)",fmt:fmtCap},{k:"mcap",label:"Market cap",fmt:fmtCap}];
+let xK="evEbitda",yK="opM";
+function initChartControls(){
+  const xs=document.getElementById("xSel"),ys=document.getElementById("ySel");
+  METRICS.forEach(m=>{xs.add(new Option(m.label,m.k));ys.add(new Option(m.label,m.k));});
+  xs.value=xK;ys.value=yK;
+  xs.onchange=e=>{xK=e.target.value;renderChart();};ys.onchange=e=>{yK=e.target.value;renderChart();};
+  document.getElementById("legend").innerHTML=Object.keys(GROUPS).map(g=>`<span><i style="background:${GCOL[g]}"></i>${GROUPS[g].label}</span>`).join("")+`<span><i style="background:var(--gold)"></i>Madison Air</span>`;
+  document.getElementById("chartHint").textContent="valuation up the page = more expensive";
+}
+function renderChart(){
+  const svg=document.getElementById("bubble");const W=svg.clientWidth||900,H=520,P={l:58,r:24,t:20,b:46};
+  const items=[...getVisible(),MAIR].filter(c=>c[xK]!=null&&c[yK]!=null);
+  const xm=METRICS.find(m=>m.k===xK),ym=METRICS.find(m=>m.k===yK);
+  const xs=items.map(c=>c[xK]),ys=items.map(c=>c[yK]);
+  let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+  const xp=(xmax-xmin||1)*.10,yp=(ymax-ymin||1)*.12;xmin-=xp;xmax+=xp;ymin-=yp;ymax+=yp;
+  if(xK!=="opM"&&xK!=="divYield"&&xmin>0)xmin=Math.min(xmin,0);if(yK!=="opM"&&ymin>0)ymin=Math.min(ymin,0);
+  const X=v=>P.l+(v-xmin)/(xmax-xmin)*(W-P.l-P.r),Y=v=>H-P.b-(v-ymin)/(ymax-ymin)*(H-P.t-P.b);
+  const maxMc=Math.max(...items.map(c=>c.mcap||1)),R=mc=>Math.max(7,Math.min(34,34*Math.sqrt((mc||1)/maxMc)));
+  let s=`<rect width="${W}" height="${H}" fill="transparent"/>`;
+  for(let i=0;i<=4;i++){const gx=P.l+i/4*(W-P.l-P.r),vx=xmin+i/4*(xmax-xmin);s+=`<line class="grid" x1="${gx}" y1="${P.t}" x2="${gx}" y2="${H-P.b}"/><text class="tick" x="${gx}" y="${H-P.b+16}" text-anchor="middle">${xm.fmt(vx)}</text>`;const gy=P.t+i/4*(H-P.t-P.b),vy=ymax-i/4*(ymax-ymin);s+=`<line class="grid" x1="${P.l}" y1="${gy}" x2="${W-P.r}" y2="${gy}"/><text class="tick" x="${P.l-8}" y="${gy+3}" text-anchor="end">${ym.fmt(vy)}</text>`;}
+  s+=`<line class="axis" x1="${P.l}" y1="${H-P.b}" x2="${W-P.r}" y2="${H-P.b}"/><line class="axis" x1="${P.l}" y1="${P.t}" x2="${P.l}" y2="${H-P.b}"/>`;
+  s+=`<text class="axt" x="${(P.l+W-P.r)/2}" y="${H-6}" text-anchor="middle">${xm.label}</text><text class="axt" x="${-(P.t+H-P.b)/2}" y="15" transform="rotate(-90)" text-anchor="middle">${ym.label}</text>`;
+  items.filter(c=>c!==MAIR).forEach(c=>{const cx=X(c[xK]),cy=Y(c[yK]),r=R(c.mcap);s+=`<circle class="bub" data-tk="${c.ticker}" cx="${cx}" cy="${cy}" r="${r}" fill="${GCOL[c.group]}" fill-opacity="0.62" stroke="${GCOL[c.group]}" stroke-opacity="0.9"/>`;if(r>=14)s+=`<text class="blab" x="${cx}" y="${cy+3.5}" text-anchor="middle">${c.ticker}</text>`;});
+  const mx=X(MAIR[xK]),my=Y(MAIR[yK]),mr=R(MAIR.mcap);
+  s+=`<circle class="bub" data-tk="MAIR" cx="${mx}" cy="${my}" r="${mr}" fill="var(--gold)" fill-opacity="0.85" stroke="#fff" stroke-width="2"/><text class="mlab" x="${mx}" y="${my-mr-7}" text-anchor="middle">MAIR</text>`;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.innerHTML=s;
+  svg.querySelectorAll("circle.bub").forEach(el=>{const c=byTicker(el.dataset.tk);
+    el.addEventListener("mousemove",ev=>showTip(`<span class="tt">${c.name} <b>${c.ticker}</b></span>${xm.label}: <b>${xm.fmt(c[xK])}</b><br>${ym.label}: <b>${ym.fmt(c[yK])}</b><br>Mkt cap: <b>${fmtCap(c.mcap)}</b>`,ev.clientX,ev.clientY));
+    el.addEventListener("mouseleave",hideTip);el.addEventListener("click",()=>openStory(el.dataset.tk));});
+}
+
+/* ===== FILTERS ===== */
+let active=new Set(Object.keys(GROUPS)),q="";
+function renderFilters(){
+  document.getElementById("filters").innerHTML=Object.keys(GROUPS).map(g=>`<span class="fchip${active.has(g)?'':' off'}" data-g="${g}"><i style="background:${GCOL[g]}"></i>${GROUPS[g].label}</span>`).join("");
+  document.querySelectorAll(".fchip").forEach(ch=>ch.onclick=()=>{const g=ch.dataset.g;active.has(g)?active.delete(g):active.add(g);if(active.size===0)active.add(g);renderFilters();renderChart();renderTable();});
+}
+function getVisible(){return COMPS.filter(c=>active.has(c.group)&&(q===""||c.name.toLowerCase().includes(q)||c.ticker.toLowerCase().includes(q)));}
+
+/* ===== SPARKLINE (from live returns) ===== */
+function sparkPts(c){if(c.r52w==null||c.price==null)return null;const now=c.price;
+  return [{x:0,p:now/(1+(c.r52w||0)/100)},{x:0.5,p:now/(1+(c.r26w||0)/100)},{x:0.74,p:now/(1+(c.r13w||0)/100)},{x:0.95,p:now/(1+(c.r5d||0)/100)},{x:1,p:now}];}
+function sparkSVG(c){const pts=sparkPts(c);if(!pts)return '<span class="dim">n/a</span>';const w=86,h=24,pad=3;
+  const ps=pts.map(p=>p.p),mn=Math.min(...ps),mx=Math.max(...ps),rg=(mx-mn)||1;
+  const xy=pts.map(p=>[pad+p.x*(w-2*pad),h-pad-((p.p-mn)/rg)*(h-2*pad)]);
+  const up=(c.r52w||0)>=0,col=up?"#37d399":"#ff6b73",last=xy[xy.length-1];
+  return `<svg width="${w}" height="${h}" class="spk" data-tip="1Y trend · 52w ${(c.r52w>=0?'+':'')+(c.r52w||0).toFixed(0)}%, 13w ${(c.r13w>=0?'+':'')+(c.r13w||0).toFixed(0)}%"><polyline points="${xy.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${col}" stroke-width="1.6"/><circle cx="${last[0]}" cy="${last[1]}" r="2.2" fill="${col}"/></svg>`;}
+
+/* ===== TABLE ===== */
+const COLS=[
+  {k:"name",t:"Company",l:true,v:c=>coCell(c)},
+  {k:"price",t:"Price",v:c=>`<span class="num">${fmtUSD(c.price)}</span>`},
+  {k:"changePct",t:"Day",v:c=>`<span class="num">${fmtChg(c.changePct)}</span>`},
+  {k:"r52w",t:"1Y trend",c:true,v:c=>sparkSVG(c)},
+  {k:"mcap",t:"Mkt Cap",v:c=>`<span class="num">${fmtCap(c.mcap)}</span>`},
+  {k:"pe",t:"P/E",v:c=>`<span class="num">${fmtX(c.pe)}</span>`},
+  {k:"fwdPe",t:"Fwd P/E",v:c=>`<span class="num">${fmtX(c.fwdPe)}</span>`},
+  {k:"evEbitda",t:"EV/EBITDA",v:c=>`<span class="num">${fmtX(c.evEbitda)}</span>`},
+  {k:"evRev",t:"EV/Rev",v:c=>`<span class="num">${fmtX(c.evRev)}</span>`},
+  {k:"ps",t:"P/S",v:c=>`<span class="num">${fmtX(c.ps)}</span>`},
+  {k:"divYield",t:"Div %",v:c=>`<span class="num dim">${fmtPct(c.divYield)}</span>`},
+  {k:"revTTM",t:"Rev TTM",v:c=>`<span class="num">${fmtCap(c.revTTM)}</span>`},
+  {k:"opM",t:"Op margin",v:c=>`<span class="num">${fmtPct(c.opM,1)}</span>`}
+];
+let sortKey="mcap",sortDir=-1;
+function coCell(c){const est=c.est?`<span class="est" data-tip="${c.est.replace(/"/g,'&quot;')}">▴</span>`:"";const live=c.fresh==="live"?" live":"";
+  return `<div class="co"><span class="gd${live}" style="background:${GCOL[c.group]}"></span><span><span class="nm">${c.name}${est}</span><span class="tk"><b>${c.ticker}</b> · ${c.ex}</span></span><span class="arrow">›</span></div>`;}
+function renderHead(){
+  document.getElementById("headRow").innerHTML=COLS.map(col=>{const sd=col.k===sortKey?" sorted":"";const car=col.k===sortKey?(sortDir<0?"▼":"▲"):"▾";const tp=DEFS[col.t]?` data-tip="${col.t}"`:"";return `<th class="${col.l?'l':''}${col.c?'c':''}${sd}" data-k="${col.k}"${tp}>${col.t}<span class="car">${car}</span></th>`;}).join("");
+  document.querySelectorAll("#headRow th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(k===sortKey)sortDir*=-1;else{sortKey=k;sortDir=(k==="name")?1:-1;}renderHead();renderTable();});
+}
+function renderTable(){
+  const getv=c=>c[sortKey];
+  const rows=getVisible().sort((a,b)=>{let x=getv(a),y=getv(b);if(typeof x==="string"||typeof y==="string"){x=(x??"")+"";y=(y??"")+"";return x<y?-sortDir:x>y?sortDir:0;}if(x==null)return 1;if(y==null)return -1;return (x-y)*sortDir;});
+  let html=rows.map(c=>`<tr data-tk="${c.ticker}">${COLS.map(col=>`<td class="${col.l?'l':''}${col.c?'c':''}">${col.v(c)}</td>`).join("")}</tr>`).join("");
+  const m=peerMedians();
+  html+=`<tr class="row-median"><td class="l"><span class="lbl">Median: your peer set (${m.n})</span></td><td class="dim"></td><td class="dim"></td><td class="dim"></td><td class="dim"></td><td class="num">${fmtX(m.pe)}</td><td class="num">${fmtX(m.fwdPe)}</td><td class="num">${fmtX(m.evEbitda)}</td><td class="num">${fmtX(m.evRev)}</td><td class="num">${fmtX(m.ps)}</td><td class="num">${fmtPct(m.divY)}</td><td class="dim"></td><td class="num">${fmtPct(m.opM,1)}</td></tr>`;
+  const body=document.getElementById("compBody");body.innerHTML=html;
+  body.querySelectorAll("tr[data-tk]").forEach(tr=>tr.onclick=()=>openStory(tr.dataset.tk));
+  document.getElementById("count").textContent=`${rows.length} of ${COMPS.length} shown · peer set = ${m.n} names`;
+}
+
+/* ===== DRAWER + NEWS ===== */
+function rangeBar(c){if(c.w52Low==null||c.w52High==null)return "";const pos=Math.max(0,Math.min(100,(c.price-c.w52Low)/((c.w52High-c.w52Low)||1)*100));
+  return `<div class="rng"><div class="rng-bar"><div class="rng-fill" style="width:${pos}%"></div><div class="rng-mark" style="left:${pos}%"></div></div><div class="rng-lab"><span>52w low ${fmtUSD(c.w52Low)}</span><span>${fmtUSD(c.w52High)} 52w high</span></div></div>`;}
+function openStory(tk){
+  const c=byTicker(tk);if(!c)return;const isM=tk==="MAIR";
+  const g=isM?{label:"The Anchor"}:GROUPS[c.group];const col=isM?"var(--gold)":GCOL[c.group];
+  const cc=c.changePct>=0?"up":"down",ct=c.changePct==null?"":`<span class="chg ${cc}" style="font-size:13px">${(c.changePct>=0?'+':'')+c.changePct.toFixed(2)}%</span>`;
+  const fresh=c.fresh==="live"?`<span class="badge" style="color:var(--up);border-color:#1f5a45">LIVE ${c.fresh_t||""}</span>`:`<span class="badge">Jun 8 snapshot</span>`;
+  const est=c.est?`<div class="dim" style="font-size:11.5px;margin-top:12px">▴ ${c.est}</div>`:"";
+  document.getElementById("drawer").innerHTML=`
+    <span class="x" id="drawerX">×</span>
+    <div class="gtag" style="color:${col}"><i style="width:9px;height:9px;border-radius:50%;background:${col};display:inline-block"></i>${g.label}</div>
+    <h2>${c.name}</h2>
+    <div class="dtk"><b>${c.exchange||c.ex}: ${c.ticker}</b> &nbsp; ${fresh}</div>
+    <div class="dprice"><span class="p num">${fmtUSD(c.price)}</span>${ct}</div>
+    ${rangeBar(c)}
+    <div class="dstory">${c.story||""}</div>
+    ${isM?`<div class="dcc" style="margin:0 0 16px"><div class="h">◆ Data-center cooling, in Madison Air's words</div><div class="b">"AI-ready, custom and configurable air, liquid and hybrid solutions." <a href="https://www.madisonair.com/industry/data-centers/" target="_blank" rel="noopener" style="color:#9be9c9;font-weight:600">madisonair.com ↗</a></div></div>`:""}
+    <div class="dgrid">
+      <div class="c"><div class="l" data-tip="Mkt Cap">Market cap</div><div class="v num">${fmtCap(c.mcap)}</div></div>
+      <div class="c"><div class="l" data-tip="EV/EBITDA">EV / EBITDA</div><div class="v num">${fmtX(c.evEbitda)}</div></div>
+      <div class="c"><div class="l" data-tip="P/E">P/E</div><div class="v num">${fmtX(c.pe)}</div></div>
+      <div class="c"><div class="l" data-tip="Fwd P/E">Forward P/E</div><div class="v num">${fmtX(c.fwdPe)}</div></div>
+      <div class="c"><div class="l" data-tip="EV/Rev">EV / Revenue</div><div class="v num">${fmtX(c.evRev)}</div></div>
+      <div class="c"><div class="l" data-tip="P/S">P / S</div><div class="v num">${fmtX(c.ps)}</div></div>
+      <div class="c"><div class="l" data-tip="Rev TTM">Revenue (TTM)</div><div class="v num">${fmtCap(c.revTTM)}</div></div>
+      <div class="c"><div class="l" data-tip="Op margin">Operating margin</div><div class="v num">${fmtPct(c.opM,1)}</div></div>
+    </div>
+    <div class="dn-h">◷ Latest headlines</div>
+    <div id="drawerNews"><span class="dim" style="font-size:12px">Loading…</span></div>
+    ${est}`;
+  document.getElementById("drawer").classList.add("open");document.getElementById("scrim").classList.add("open");
+  document.getElementById("drawerX").onclick=closeStory;
+  loadNews(c);
+}
+function closeStory(){document.getElementById("drawer").classList.remove("open");document.getElementById("scrim").classList.remove("open");}
+document.getElementById("scrim").onclick=closeStory;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeStory();});
+const newsCache={};
+async function loadNews(c){
+  const el=document.getElementById("drawerNews");if(!el)return;const sym=c.live;
+  if(!sym||sym.includes(".")){el.innerHTML='<div class="dim" style="font-size:11.5px">Live news isn\'t available for this listing.</div>';return;}
+  if(newsCache[sym]){el.innerHTML=newsCache[sym];return;}
+  const fk=localStorage.getItem("finnhubKey")||FINNHUB_KEY;
+  const f=d=>d.toISOString().slice(0,10);const to=new Date(),from=new Date(Date.now()-30*864e5);
+  try{
+    const r=await fetch(`https://finnhub.io/api/v1/company-news?symbol=${sym}&from=${f(from)}&to=${f(to)}&token=${fk}`);
+    const j=await r.json();
+    if(Array.isArray(j)&&j.length){
+      const html=j.slice(0,4).map(n=>`<a class="news" href="${n.url}" target="_blank" rel="noopener"><span class="nsrc">${n.source} · ${new Date(n.datetime*1000).toLocaleDateString()}</span><span class="nhead">${(n.headline||"").slice(0,150)}</span></a>`).join("");
+      newsCache[sym]=html;el.innerHTML=html;
+    } else el.innerHTML='<div class="dim" style="font-size:11.5px">No headlines in the last 30 days.</div>';
+  }catch(e){el.innerHTML='<div class="dim" style="font-size:11.5px">News unavailable right now.</div>';}
+}
+
+/* ===== NOTES ===== */
+function renderNotes(){document.getElementById("notes").innerHTML=`<b>Peer set &amp; method.</b> The valuation lens and the median row use the peer set you build above (default: the pure-play air / HVAC / thermal names). Implied price = (median multiple × MAIR metric − $${MAIR.netDebt.toFixed(2)}B net debt) ÷ ${(MAIR.shares*1000).toFixed(0)}M shares.<br><b>Sources.</b> Public market data as of ${SNAPSHOT_DATE} close, streamed live via Finnhub (price, day move, market cap, price-linked multiples, 52-week range and the 1-year trend). Madison Air figures from its April 2026 IPO prospectus and FY2025 results. International names (Munters, LG) converted to USD at approximate FX; ADR secondary metrics (Daikin, Mitsubishi, Schneider) approximate, marked <span class="est">▴</span>. Headlines via Finnhub company news.`;}
+
+/* ===== LIVE DATA ===== */
+function nowHM(){return new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});}
+async function fetchQuote(sym){
+  const fk=localStorage.getItem("finnhubKey")||FINNHUB_KEY;
+  if(fk&&sym&&!sym.includes(".")){try{const r=await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(sym)}&token=${fk}`);if(r.ok){const j=await r.json();if(j&&typeof j.c==="number"&&j.c>0)return{price:j.c,changePct:(typeof j.dp==="number"?j.dp:null)};}}catch(e){}}
+  if(sym){try{const r=await fetch(`https://financialmodelingprep.com/stable/quote?symbol=${encodeURIComponent(sym)}&apikey=${FMP_KEY}`);if(r.ok){const j=await r.json();if(Array.isArray(j)&&j[0]&&typeof j[0].price==="number")return{price:j[0].price,changePct:(typeof j[0].changePercentage==="number"?j[0].changePercentage:null)};}}catch(e){}}
+  return null;
+}
+async function fetchMetric(sym){const fk=localStorage.getItem("finnhubKey")||FINNHUB_KEY;if(!fk||!sym||sym.includes("."))return null;
+  try{const r=await fetch(`https://finnhub.io/api/v1/stock/metric?symbol=${encodeURIComponent(sym)}&metric=all&token=${fk}`);if(r.ok){const j=await r.json();if(j&&j.metric)return j.metric;}}catch(e){}return null;}
+function applyLive(c,q){if(!q||!q.price)return false;const f=q.price/c.basePrice;c.price=q.price;c.changePct=(q.changePct!=null)?q.changePct:c.changePct;c.mcap=c.baseMcap*f;c.pe=c.basePe!=null?c.basePe*f:null;c.ps=c.basePs!=null?c.basePs*f:null;const nd=c.baseEv-c.baseMcap;c.ev=c.mcap+nd;c.evEbitda=c.baseEvEbitda!=null?c.baseEvEbitda*(c.ev/c.baseEv):null;c.evRev=c.baseEvRev!=null?c.baseEvRev*(c.ev/c.baseEv):null;c.fresh="live";c.fresh_t=nowHM();return true;}
+function applyMetric(c,m){if(!m)return;c.w52High=m["52WeekHigh"];c.w52Low=m["52WeekLow"];c.r5d=m["5DayPriceReturnDaily"];c.r13w=m["13WeekPriceReturnDaily"];c.r26w=m["26WeekPriceReturnDaily"];c.r52w=m["52WeekPriceReturnDaily"];}
+let refreshing=false;
+async function refreshLive(){
+  if(refreshing)return;refreshing=true;
+  const btn=document.getElementById("refreshBtn");btn.disabled=true;btn.textContent="↻ Refreshing…";
+  const dot=document.getElementById("statusDot"),st=document.getElementById("statusText");
+  const all=[MAIR,...COMPS].filter(c=>c.live);
+  await Promise.all(all.map(c=>fetchQuote(c.live).then(q=>applyLive(c,q))));
+  await Promise.all(all.filter(c=>!c.metricLoaded).map(c=>fetchMetric(c.live).then(m=>{applyMetric(c,m);c.metricLoaded=true;})));
+  const live=[MAIR,...COMPS].filter(c=>c.fresh==="live").length;
+  renderHero();renderChart();renderHead();renderTable();
+  if(live>0){dot.className="dot live";st.textContent=`Live · ${live} streaming`;document.getElementById("asof").innerHTML=`<b>${nowHM()}</b>`;}
+  else{dot.className="dot";st.textContent="Snapshot";}
+  btn.disabled=false;btn.textContent="↻ Refresh live";refreshing=false;
+}
+let autoTimer=null;
+document.getElementById("autoChk").onchange=e=>{if(e.target.checked){refreshLive();autoTimer=setInterval(refreshLive,60000);}else{clearInterval(autoTimer);autoTimer=null;}};
+document.getElementById("refreshBtn").onclick=refreshLive;
+const keyInput=document.getElementById("finnhubKey"),keyState=document.getElementById("keyState");
+(function(){const k=localStorage.getItem("finnhubKey");if(k){keyInput.value=k;keyState.textContent="✓ override active";}})();
+document.getElementById("saveKey").onclick=()=>{const v=keyInput.value.trim();if(v){localStorage.setItem("finnhubKey",v);keyState.textContent="✓ saved";}else{localStorage.removeItem("finnhubKey");keyState.textContent="using built-in key";}for(const c of [MAIR,...COMPS])c.metricLoaded=false;refreshLive();};
+document.getElementById("search").oninput=e=>{q=e.target.value.trim().toLowerCase();renderChart();renderTable();};
+
+/* ===== INIT ===== */
+document.getElementById("asof").textContent=SNAPSHOT_DATE;
+renderHero();initChartControls();renderChart();renderFilters();renderHead();renderTable();renderNotes();
+window.addEventListener("resize",()=>renderChart());
+document.getElementById("statusText").textContent="Snapshot";
+refreshLive();
+</script>
+</body>
+</html>
